@@ -13,3 +13,6 @@ langchain-chroma
 transformers
 asyncpg
 PyJWT
+torch
+torchvision
+torchaudio
