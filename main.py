@@ -106,20 +106,20 @@ async def login_user(user: UserLogin, db: Session = Depends(get_db)):
             raise HTTPException(status_code=400, detail="Incorrect email or password")
 
 @app.post("/chat")
-async def chat(request: ChatRequest, user_id: int = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    user_identity = user_id  # User ID from JWT
+async def chat(request: ChatRequest, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    user_identity = user.id  # Extract the user ID from the User object
     message = request.message
 
     if not message:
         return Response(content=json.dumps({'error': 'Message is required'}), status_code=400)
 
     async with db as session:
-        result = await session.execute(select(User).filter_by(id=user_identity))
+        result = await session.execute(select(User).filter(User.id == user_identity))
         user = result.scalars().first()
         if not user:
             return Response(content=json.dumps({'error': 'User not found'}), status_code=404)
 
-        chat_history = json.loads(user.chat_history)
+        chat_history = json.loads(user.chat_history) if user.chat_history else []
         vector_store = initialize_chatbot()
 
         if message.lower() in ['exit', 'quit']:
@@ -146,7 +146,8 @@ async def chat(request: ChatRequest, user_id: int = Depends(get_current_user), d
         user.chat_history = json.dumps(chat_history)
         await session.commit()
 
-        return {'answer': response['answer']}        
+        return {'answer': response['answer']}
+ 
 
 @app.put("/update_user")
 async def update_user(update_data: dict = Body(...), user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
@@ -169,8 +170,10 @@ async def get_chat_history(user: User = Depends(get_current_user)):
 
 @app.get("/get_offers")
 async def get_offers_for_user(user: User = Depends(get_current_user)):
-    offers = json.loads(user.offers)
+    # Handle the case where user.offers is None
+    offers = json.loads(user.offers) if user.offers else []
     return {"user_id": user.id, "offers": offers}
+
 
 
 
