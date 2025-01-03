@@ -55,14 +55,11 @@ Create a `.env` file in the root directory of the project and add your OpenAI AP
 ```plaintext
 SECRET_KEY=your_secret_key_here
 OPENAI_API_KEY=your_openai_api_key_here
-DB_USER=postgres
-DB_PASSWORD=your_db_password_here
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=your_db_name
 ```
+### Connect to PostgreSQL
 
-Replace `your_openai_api_key_here` with your actual OpenAI API key.
+Change DATABASE_URL accordingly 
+postgresql+asyncpg://<user>:<password>@<host>:<port>/<database_name>
 
 ### Running the Application
 
