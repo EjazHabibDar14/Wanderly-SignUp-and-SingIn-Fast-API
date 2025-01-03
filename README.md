@@ -58,10 +58,11 @@ OPENAI_API_KEY=your_openai_api_key_here
 ```
 ### Connect to PostgreSQL
 
+```plaintext
 Change DATABASE_URL accordingly in db.py
 DATABASE_URL = postgresql+asyncpg://<user>:<password>@<host>:<port>/<database_name>
 Replace <user>, <password>, <host>, <port>, and <database_name> with your database credentials and information.
-
+```
 
 ### Running the Application
 
